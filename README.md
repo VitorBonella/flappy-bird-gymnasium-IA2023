@@ -17,18 +17,8 @@ hand, yields simple numerical information about the game's state as
 observations.
 
 ### `FlappyBird-v0`
-* the last pipe's horizontal position
-* the last top pipe's vertical position
-* the last bottom pipe's vertical position
-* the next pipe's horizontal position
-* the next top pipe's vertical position
-* the next bottom pipe's vertical position
-* the next next pipe's horizontal position
-* the next next top pipe's vertical position
-* the next next bottom pipe's vertical position
-* player's vertical position
-* player's vertical velocity
-* player's rotation
+* Index 0 -> Horizontal Distance to Pipe
+* Index 1 -> Vertical Distante to Pipe
 
 ### `FlappyBird-rgb-v0`
 The RGB image of size 288, 512 pixels. The pixel values are from range [0, 255]. The image does not contain score of bird.

@@ -46,7 +46,7 @@ The RGB image of size 288, 512 pixels. The pixel values are from range [0, 255].
 
 To install `flappy-bird-gymnasium`, simply run the following command:
 
-    $ pip install flappy-bird-gymnasium
+    $ pip install git+https://github.com/VitorBonella/flappy-bird-gymnasium-IA2023.git
     
 ## Usage
 

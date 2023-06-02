@@ -99,50 +99,31 @@ class FlappyBirdEnvSimple(gymnasium.Env):
         self._bg_type = background
 
     def _get_observation(self):
-        pipes = []
-        for up_pipe, low_pipe in zip(self._game.upper_pipes, self._game.lower_pipes):
-            # the pipe is behind the screen?
-            if low_pipe["x"] > self._screen_size[0]:
-                pipes.append((self._screen_size[0], 0, self._screen_size[1]))
-            else:
-                pipes.append(
-                    (low_pipe["x"], (up_pipe["y"] + PIPE_HEIGHT), low_pipe["y"])
-                )
+        up_pipe = low_pipe = None
+        h_dist = 0
+        for up_pipe, low_pipe in zip(self._game.upper_pipes,
+                                     self._game.lower_pipes):
+            h_dist = (low_pipe["x"] + PIPE_WIDTH / 2
+                      - (self._game.player_x - PLAYER_WIDTH / 2))
+            h_dist += 3  # extra distance to compensate for the buggy hit-box
+            if h_dist >= 0:
+                break
 
-        pipes = sorted(pipes, key=lambda x: x[0])
-        pos_y = self._game.player_y
-        vel_y = self._game.player_vel_y
-        rot = self._game.player_rot
+        upper_pipe_y = up_pipe["y"] + PIPE_HEIGHT
+        lower_pipe_y = low_pipe["y"]
+        player_y = self._game.player_y
+
+        v_dist = (upper_pipe_y + lower_pipe_y) / 2 - (player_y
+                                                      + PLAYER_HEIGHT/2)
 
         if self._normalize_obs:
-            pipes = [
-                (
-                    h / self._screen_size[0],
-                    v1 / self._screen_size[1],
-                    v2 / self._screen_size[1],
-                )
-                for h, v1, v2 in pipes
-            ]
-            pos_y = pos_y / self._screen_size[1]
-            vel_y /= PLAYER_MAX_VEL_Y
-            rot /= 90
+            h_dist /= self._screen_size[0]
+            v_dist /= self._screen_size[1]
 
-        return np.array(
-            [
-                pipes[0][0],  # the last pipe's horizontal position
-                pipes[0][1],  # the last top pipe's vertical position
-                pipes[0][2],  # the last bottom pipe's vertical position
-                pipes[1][0],  # the next pipe's horizontal position
-                pipes[1][1],  # the next top pipe's vertical position
-                pipes[1][2],  # the next bottom pipe's vertical position
-                pipes[2][0],  # the next next pipe's horizontal position
-                pipes[2][1],  # the next next top pipe's vertical position
-                pipes[2][2],  # the next next bottom pipe's vertical position
-                pos_y,  # player's vertical position
-                vel_y,  # player's vertical velocity
-                rot,  # player's rotation
-            ]
-        )
+        return np.array([
+            h_dist,
+            v_dist,
+        ])
 
     def step(
         self,
